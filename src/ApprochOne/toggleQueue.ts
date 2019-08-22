@@ -40,7 +40,7 @@ export default class EmailQueues {
           console.info("Email sent", emailData);
         } catch (err) {
           console.error("Email failed", this.qname, err);
-          this.handleRejectedMessages(msg);
+          await this.handleRejectedMessages(msg);
         }
       }
     });
@@ -53,7 +53,7 @@ export default class EmailQueues {
     );
   }
 
-  private handleRejectedMessages(msg) {
+  private async handleRejectedMessages(msg) {
     // ack original msg
     this.channel.ack(msg);
 
@@ -61,11 +61,11 @@ export default class EmailQueues {
     content = Buffer.from(JSON.stringify(content));
 
     if (this.qname === EmailQueues.qnameMG) {
-      this.channel.sendToQueue(EmailQueues.qnameSG, content);
+      await this.channel.sendToQueue(EmailQueues.qnameSG, content);
     }
 
     if (this.qname === EmailQueues.qnameSG) {
-      this.channel.sendToQueue(EmailQueues.qnameMG, content);
+      await this.channel.sendToQueue(EmailQueues.qnameMG, content);
     }
   }
 }

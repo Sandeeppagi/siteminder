@@ -14,7 +14,7 @@ export default class CreateExchange {
 
     return channel.assertExchange(this.excName, "direct", {
       autoDelete: false,
-      durable: true
+      durable: true,
     });
   }
 }

@@ -80,6 +80,7 @@ export default class EmailService {
     } catch (error) {
       console.error(error);
     }
+
     throw new Error("No email providers closed");
   }
 }

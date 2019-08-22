@@ -1,14 +1,24 @@
-import * as sdk from '@sendgrid/mail';
+import * as lib from "@sendgrid/mail";
+import HttpCall from "./../services/httpRequest";
 
 export default class SendGrid {
+    private httpCall: HttpCall;
 
     constructor() {
-        sdk.setApiKey(process.env.SENDGRID_KEY);
+        lib.setApiKey(process.env.SENDGRID_KEY);
     }
 
     public async sendEmail(data) {
-        console.log("Email sent SG");
-        sdk.send(data);
-    }
+        console.log("Email via SG");
 
+        // Call using axioms
+        this.httpCall = new HttpCall(
+            process.env.SENDGRID_URL,
+            process.env.SENDGRID_KEY,
+        );
+        return this.httpCall.postCall(data);
+
+        // Call using sendgrid lib
+        // return lib.send(data);
+    }
 }
