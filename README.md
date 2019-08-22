@@ -7,6 +7,17 @@ Some newer features have been used in this project are as below
 - Docker
 - RabbitMQ
 
+####Create .env file for below variables
+
+````
+PORT=3009
+NODE_ENV=dev
+AMQP_URL
+MAILGUN_KEY
+SENDGRID_KEY
+````
+
+
 ### Installing dependcies
 
 Install dependenies by running and running app
