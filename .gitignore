@@ -1,0 +1,6 @@
+*/**/*.js
+*/**/*.map
+.idea
+dist
+.env
+node_modules

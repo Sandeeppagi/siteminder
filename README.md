@@ -1,7 +1,6 @@
 # Siteminder challenge
 
 Some newer features have been used in this project are as below
-- Native ES6 modules in Node by using `--experimental-modules`, this is not fit for production and is not supported in some libs like Jest (yet).
 - Express
 - TypeScript
 - Docker
@@ -28,8 +27,41 @@ npm run rabbitmq
 npm run build-ts
 npm start
 ```
+### Solution
 
-## Running the API
+I have solved the given problem with 2 approaches both uses RabbitMQ
+
+- ApproachOne: Failure/Toggle over to available queue in case of failure
+- ApproachTwo: Implement circuit breaker with DLX queues
+
+###### ApproachOne
+
+Below are logs when email is sent vai MailGun, the request fails for the domain property of mailgun.
+We see 2 logs, failure log for mailgun and success for the sendgrid for the same email.
+
+````
+Running server on port 3009
+POST /email [object Object]
+Email sent MG
+Email failed mailgun-2 Error: Domain not found: www.google.com
+    at IncomingMessage.<anonymous> (/Users/sandy/Projects/siteminderTest/node_modules/mailgun-js/lib/request.js:327:17)
+    at IncomingMessage.emit (events.js:214:15)
+    at endReadableNT (_stream_readable.js:1178:12)
+    at processTicksAndRejections (internal/process/task_queues.js:77:11) {
+  statusCode: 404
+}
+Email sent SG
+Email sent {
+  from: 'sandippagi@gmail.com',
+  subject: 'vjvjhvvljvl',
+  text: 'hvhvljbjlb',
+  to: 'sandippagi@gmail.com',
+  isMultiple: false,
+  substitutionWrappers: [ '{{', '}}' ]
+}
+
+```` 
+###### Running the API
 
 ```
 curl -X POST \
@@ -46,7 +78,10 @@ curl -X POST \
 }'
 ```
 
+###### ApproachTwo
+
 ![Alt text](circuitBreaker.png?raw=true "Title")
 
-## Acknowledgments
+
+#### Acknowledgments
 Thank you reviewing the solution I look forward to hearing back from the technical team.

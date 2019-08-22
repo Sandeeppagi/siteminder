@@ -1,11 +1,11 @@
-import {Bin} from './bin';
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
+import { Bin } from "./bin";
 dotenv.config();
 
 export class Server extends Bin {
 
   public static bootstrap(): Server {
-    process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
+    process.env.NODE_ENV = process.env.NODE_ENV || "dev";
     return new Server();
   }
 
@@ -33,11 +33,10 @@ export class Server extends Bin {
     this.routes();
   }
 
-  setPort() {
+  private setPort() {
     // Set port
     this.port = process.env.PORT || 3000;
   }
-
 
 }
 

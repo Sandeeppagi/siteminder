@@ -6,7 +6,7 @@ export default class SendGrid {
         sdk.setApiKey(process.env.SENDGRID_KEY);
     }
 
-    public async sendEmail(data){
+    public async sendEmail(data) {
         console.log("Email sent SG");
         sdk.send(data);
     }
