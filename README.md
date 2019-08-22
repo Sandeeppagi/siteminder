@@ -26,13 +26,24 @@ Install dependenies by running and running app
 npm install
 npm run rabbitmq
 npm run build-ts
-npm test
+npm start
 ```
 
-## Running the tests
+## Running the API
 
 ```
-npm test
+curl -X POST \
+  http://localhost:3009/email \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 698f916d-6faf-e5e0-34ad-0aa14596596e' \
+  -d '{
+	"to": "sandippagi@gmail.com",
+	"cc": "",
+	"bcc": "",
+	"subject": "vjvjhvvljvl",
+	"body": "hvhvljbjlb"
+}'
 ```
 
 ![Alt text](circuitBreaker.png?raw=true "Title")
