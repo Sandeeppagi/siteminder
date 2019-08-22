@@ -18,7 +18,7 @@ export default class EmailService {
   private mailGun: CircuitBreaker | ToggleQueue;
 
   public async buildQueues() {
-    if (process.env.APPROCH === "ApprochOne") {
+    if (process.env.APPROACH === "ApprochOne") {
       // Toogle queues on single failure approch
       const emailEx = new CreateExchange("emailEx");
       await emailEx.createConnection();
@@ -30,7 +30,7 @@ export default class EmailService {
       await this.sendGrid.createConnection();
 
       return;
-    } else if (process.env.APPROCH === "ApprochTwo") {
+    } else if (process.env.APPROACH === "ApprochTwo") {
       // Circuit Breker approch
       const dlx = new CreateExchange("DLX");
       await dlx.createConnection();

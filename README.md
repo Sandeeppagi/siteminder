@@ -11,7 +11,9 @@ Some newer features have been used in this project are as below
 ````
 PORT=3009
 NODE_ENV=dev
+APPROACH
 AMQP_URL
+AMQP_LOCAL
 MAILGUN_KEY
 SENDGRID_KEY
 ````
