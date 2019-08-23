@@ -16,13 +16,13 @@ export default class MailGun {
     console.log("Email via MG");
 
     // Call using axioms
-    this.httpCall = new HttpCall(
-      process.env.MAILGUN_URL,
-      process.env.MAILGUN_KEY,
-    );
-    return this.httpCall.postCall(data);
+    // this.httpCall = new HttpCall(
+    //   process.env.MAILGUN_URL,
+    //   process.env.MAILGUN_KEY,
+    // );
+    // return this.httpCall.postCall(data);
 
     // Call using mailgun lib
-    // return this.mailgun.messages().send(data);
+    return this.mailgun.messages().send(data);
   }
 }

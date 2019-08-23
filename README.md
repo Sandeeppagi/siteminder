@@ -31,6 +31,10 @@ npm start
 ```
 ### Solution
 
+Hosted on AWS 
+- Endpoint http://18.217.47.106:3009/email
+- RabbitMQ http://18.217.47.106:15672, user: guest, password: guest
+
 I have solved the given problem with 2 approaches both uses RabbitMQ
 
 - ApproachOne: Failure/Toggle over to available queue in case of failure
