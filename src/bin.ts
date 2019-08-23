@@ -102,7 +102,7 @@ export class Bin {
     try {
       await this.emailService.buildQueues();
     } catch (error) {
-      throw new Error("Failed to initialise email service");
+      throw new Error("Failed to initialise email service", error);
     }
   }
 }

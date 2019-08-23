@@ -9,12 +9,16 @@ export default class CreateExchange {
 
   public async createConnection() {
     const url = process.env.AMQP_LOCAL || process.env.AMQP_URL;
-    const conn = await amqplib.connect(url);
-    const channel = await conn.createChannel();
-
-    return channel.assertExchange(this.excName, "direct", {
-      autoDelete: false,
-      durable: true,
-    });
+    try {
+      const conn = await amqplib.connect(url);
+      console.log("conn - ", conn);
+      const channel = await conn.createChannel();
+      return channel.assertExchange(this.excName, "direct", {
+        autoDelete: false,
+        durable: true,
+      });
+    } catch (err) {
+      throw new Error("error occurred while connecting to amqp - " + err);
+    }
   }
 }
