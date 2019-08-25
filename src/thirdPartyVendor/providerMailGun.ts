@@ -13,7 +13,7 @@ export default class MailGun {
   }
 
   public async sendEmail(data) {
-    console.log("Email via MG");
+    // console.log("Email via MG");
 
     // Call using axioms
     // this.httpCall = new HttpCall(

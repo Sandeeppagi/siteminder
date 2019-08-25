@@ -1,15 +1,15 @@
 import * as amqplib from "amqplib";
 
 export default class EmailQueues {
-  private static qnameMG: string = "mailgun-2";
-  private static qnameSG: string = "sendgrid-2";
+  private static qnameMG: string = "mailgun-1";
+  private static qnameSG: string = "sendgrid-1";
   private qname: string;
   private vendor: any;
-  private dlxExchangeName: string;
+  private directExchangeName: string;
   private channel: any;
 
-  constructor(dlxExchangeName, vendor, qname) {
-    this.dlxExchangeName = dlxExchangeName;
+  constructor(directExchangeName, vendor, qname) {
+    this.directExchangeName = directExchangeName;
     this.vendor = vendor;
     this.qname = qname;
     this.channel = null;
@@ -27,19 +27,19 @@ export default class EmailQueues {
 
   public async producer() {
     await this.channel.assertQueue(this.qname);
-    await this.channel.bindQueue(this.qname, this.dlxExchangeName, this.qname);
+    await this.channel.bindQueue(this.qname, this.directExchangeName, this.qname);
   }
 
   public async consumers() {
-    await this.channel.consume(this.qname, async msg => {
+    await this.channel.consume(this.qname, async (msg) => {
       if (msg !== null) {
         try {
           const emailData = JSON.parse(msg.content.toString("utf8"));
           await this.vendor.sendEmail(emailData);
           this.channel.ack(msg);
-          console.info("Email sent", emailData);
+          // console.info("Email sent", emailData);
         } catch (err) {
-          console.error("Email failed", this.qname, err);
+          // console.error("Email failed", this.qname, err);
           await this.handleRejectedMessages(msg);
         }
       }
@@ -49,7 +49,7 @@ export default class EmailQueues {
   public async sendToQueue(email) {
     return this.channel.sendToQueue(
       this.qname,
-      Buffer.from(JSON.stringify(email))
+      Buffer.from(JSON.stringify(email)),
     );
   }
 

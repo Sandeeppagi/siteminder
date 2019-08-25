@@ -9,16 +9,16 @@ export default class SendGrid {
     }
 
     public async sendEmail(data) {
-        console.log("Email via SG");
+        // console.log("Email via SG");
 
         // Call using axioms
-        this.httpCall = new HttpCall(
-            process.env.SENDGRID_URL,
-            process.env.SENDGRID_KEY,
-        );
-        return this.httpCall.postCall(data);
+        // this.httpCall = new HttpCall(
+        //     process.env.SENDGRID_URL,
+        //     process.env.SENDGRID_KEY,
+        // );
+        // return this.httpCall.postCall(data);
 
         // Call using sendgrid lib
-        // return lib.send(data);
+        return lib.send(data);
     }
 }

@@ -16,7 +16,7 @@ export class Bin {
 
   protected listen(): void {
     this.server.listen(this.port, () => {
-      console.log("Running server on port %s", this.port);
+      // console.log("Running server on port %s", this.port);
     });
   }
 
@@ -37,51 +37,51 @@ export class Bin {
   protected loggerMiddleware(
     request: express.Request,
     response: express.Response,
-    next
+    next,
   ) {
-    console.log(`${request.method} ${request.path}`);
+    // console.log(`${request.method} ${request.path}`);
     next();
   }
 
   protected routes(): void {
     const schema = Joi.object().keys({
-      to: Joi.string().regex(
-        /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/
-      ),
-      cc: Joi.string()
-        .regex(
-          /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/
-        )
-        .allow(""),
       bcc: Joi.string()
         .regex(
-          /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/
-        )
+          /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/,
+      )
+        .allow(""),
+      body: Joi.string()
+        .regex(/^[_A-z0-9]*((-|\s)*[_A-z0-9])*$/)
+        .required(),
+      cc: Joi.string()
+        .regex(
+          /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/,
+      )
         .allow(""),
       subject: Joi.string()
         .regex(/^[_A-z0-9]*((-|\s)*[_A-z0-9])*$/)
         .required(),
-      body: Joi.string()
-        .regex(/^[_A-z0-9]*((-|\s)*[_A-z0-9])*$/)
-        .required()
+      to: Joi.string().regex(
+        /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/,
+      ),
     });
 
     this.app.use(
       (request: express.Request, response: express.Response, next) => {
-        console.log(`${request.method} ${request.path} ${request.body}`);
+        // console.log(`${request.method} ${request.path} ${request.body}`);
         Joi.validate(request.body, schema, (err, value) => {
           const id = Math.ceil(Math.random() * 9999999);
           if (err) {
             return response.status(422).json({
-              data: { data: request.body, err: err },
+              data: { data: request.body, err },
               message: "Invalid request data",
-              status: "error"
+              status: "error",
             });
           } else {
             next();
           }
         });
-      }
+      },
     );
 
     this.app.post("/email", async (request, response) => {
@@ -90,10 +90,10 @@ export class Bin {
         response.status(200).json({
           data: { data: request.body },
           message: "Email Sent",
-          status: "Success"
+          status: "Success",
         });
       } catch (err) {
-        console.error(err);
+        // console.error(err);
       }
     });
   }

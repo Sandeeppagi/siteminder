@@ -18,69 +18,60 @@ export default class EmailService {
   private mailGun: CircuitBreaker | ToggleQueue;
 
   public async buildQueues() {
+    const emailEx = new CreateExchange("emailEx", "direct");
+    await emailEx.createConnection();
+
     if (process.env.APPROACH === "ApprochOne") {
       // Toogle queues on single failure approch
-      const emailEx = new CreateExchange("emailEx");
-      await emailEx.createConnection();
-
-      this.mailGun = new ToggleQueue("emailEx", new MailGun(), "mailgun-2");
-      this.sendGrid = new ToggleQueue("emailEx", new SendGrid(), "sendgrid-2");
-
-      await this.mailGun.createConnection();
-      await this.sendGrid.createConnection();
-
-      return;
+      this.mailGun = new ToggleQueue("emailEx", new MailGun(), "mailgun-1");
+      this.sendGrid = new ToggleQueue("emailEx", new SendGrid(), "sendgrid-1");
     } else if (process.env.APPROACH === "ApprochTwo") {
       // Circuit Breker approch
-      const dlx = new CreateExchange("DLX");
-      await dlx.createConnection();
-
       this.mailGun = new CircuitBreaker(
-        "DLX",
+        "emailEx",
         new MailGun(),
-        "q.mailgun",
-        6000,
-        1
+        "mailgun-2",
+        6000, 1,
       );
       this.sendGrid = new CircuitBreaker(
-        "DLX",
+        "emailEx",
         new SendGrid(),
-        "q.sendgrid",
-        6000,
-        1
+        "sendgrid-2",
+        6000, 1,
       );
-
-      await this.mailGun.createConnection();
-      await this.sendGrid.createConnection();
-      return;
     }
+
+    await this.mailGun.createConnection();
+    await this.sendGrid.createConnection();
+    return;
   }
 
   public async send(input) {
-    // Normalise data for each mail provider
     const data = {
       bcc: formatEmailAddress(input.bcc),
       cc: formatEmailAddress(input.cc),
       from: "sandippagi@gmail.com",
       subject: input.subject,
       text: input.body,
-      to: formatEmailAddress(input.to)
+      to: formatEmailAddress(input.to),
     };
 
     try {
-      this.mailGun.sendToQueue(data);
+      // console.log("Sending mail from MG");
+      await this.mailGun.sendToQueue(data);
       return;
     } catch (error) {
-      console.error(error);
+      // console.error("Circuit broken for MG", error);
     }
 
     try {
-      this.sendGrid.sendToQueue(data);
+      // console.log("Sending mail from SG");
+      await this.sendGrid.sendToQueue(data);
       return;
     } catch (error) {
-      console.error(error);
+      // console.error("Circuit broken for SG", error);
     }
 
-    throw new Error("No email providers closed");
+    throw new Error("Both email provider are alive");
   }
 }
