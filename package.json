@@ -9,6 +9,8 @@
     "serve": "node dist/src/server.js",
     "watch-node": "nodemon dist/src/server.js",
     "watch-ts": "tsc -w",
+    "tslint": "tslint -p tsconfig.json",
+    "tslint-fix": "tslint --fix -p tsconfig.json",
     "rabbitmq": "docker run -d --hostname my-rabbit --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management"
   },
   "keywords": [],
@@ -21,7 +23,6 @@
     "@types/joi": "^14.3.3",
     "@types/mailgun-js": "^0.22.3",
     "@types/node": "^12.7.2",
-    "jest": "^24.9.0",
     "nodemon": "^1.19.1",
     "tslint": "^5.19.0",
     "typescript": "^3.5.3"

@@ -65,9 +65,9 @@ export default class CircuitBreaker {
           const emailData = JSON.parse(msg.content.toString("utf8"));
           await this.vendor.sendEmail(emailData);
           this.channel.ack(msg);
-          // console.info("Email sent", emailData);
+          console.log("Email consumed by queue", this.qname);
         } catch (err) {
-          // console.error("Email failed", this.qname, err);
+          console.error("Email failed", this.qname, err);
           this.checkCircuit();
           // this.channel.nack(msg);
           await this.handleRejectedMessages(msg);
@@ -78,7 +78,6 @@ export default class CircuitBreaker {
     await this.channel.consume(this.dlxQueueName, async (msg) => {
       if (msg !== null) {
         try {
-          // console.info("Processing", this.qname);
           await this.switchVendor(msg);
         } catch (err) {
           this.checkCircuit();

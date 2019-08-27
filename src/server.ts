@@ -30,7 +30,8 @@ export class Server extends Bin {
     this.configEmail();
 
     // Routes
-    this.routes();
+    // this.routes();
+    this.routesExtracted();
   }
 
   private setPort() {

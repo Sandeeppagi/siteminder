@@ -14,8 +14,18 @@ const formatEmailAddress = (data) => {
 };
 
 export default class EmailService {
+  public static getInstance() {
+    if (!this.instance) {
+      this.instance = new EmailService();
+    }
+    return this.instance;
+  }
+
+  private static instance: any;
   private sendGrid: CircuitBreaker | ToggleQueue;
   private mailGun: CircuitBreaker | ToggleQueue;
+
+  private constructor() {}
 
   public async buildQueues() {
     const emailEx = new CreateExchange("emailEx", "direct");
@@ -31,13 +41,15 @@ export default class EmailService {
         "emailEx",
         new MailGun(),
         "mailgun-2",
-        6000, 1,
+        6000,
+        1
       );
       this.sendGrid = new CircuitBreaker(
         "emailEx",
         new SendGrid(),
         "sendgrid-2",
-        6000, 1,
+        6000,
+        1
       );
     }
 
@@ -53,23 +65,23 @@ export default class EmailService {
       from: "sandippagi@gmail.com",
       subject: input.subject,
       text: input.body,
-      to: formatEmailAddress(input.to),
+      to: formatEmailAddress(input.to)
     };
 
     try {
-      // console.log("Sending mail from MG");
+      console.log("Sending mail from MG");
       await this.mailGun.sendToQueue(data);
       return;
     } catch (error) {
-      // console.error("Circuit broken for MG", error);
+      console.error("Circuit broken for MG", error);
     }
 
     try {
-      // console.log("Sending mail from SG");
+      console.log("Sending mail from SG");
       await this.sendGrid.sendToQueue(data);
       return;
     } catch (error) {
-      // console.error("Circuit broken for SG", error);
+      console.error("Circuit broken for SG", error);
     }
 
     throw new Error("Both email provider are alive");
