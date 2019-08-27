@@ -47,6 +47,7 @@ export default class EmailQueues {
   }
 
   public async sendToQueue(email) {
+    console.log("Toggle sendToQueue called");
     return this.channel.sendToQueue(
       this.qname,
       Buffer.from(JSON.stringify(email)),

@@ -8,19 +8,19 @@ export default class CircuitBreaker {
   private dlxExchangeName: string;
   private dlxQueueName: string;
   private channel: any;
-  private retry: number;
+  private retryMSec: number;
   private circuit: string;
   private badRequest: number;
   private failedTime: any;
   private threshHold: number;
 
-  constructor(dlxExchangeName, vendor, qname, retry, threshHoldFailure) {
+  constructor(dlxExchangeName, vendor, qname, retryMSec, threshHoldFailure) {
     this.dlxExchangeName = dlxExchangeName;
     this.vendor = vendor;
     this.qname = qname;
     this.dlxQueueName = `${dlxExchangeName}.${qname}`;
     this.channel = null;
-    this.retry = retry;
+    this.retryMSec = retryMSec;
     this.threshHold = threshHoldFailure;
     this.resetCircuit();
   }
@@ -68,7 +68,7 @@ export default class CircuitBreaker {
           console.log("Email consumed by queue", this.qname);
         } catch (err) {
           console.error("Email failed", this.qname, err);
-          this.checkCircuit();
+          this.updateCircuit();
           // this.channel.nack(msg);
           await this.handleRejectedMessages(msg);
         }
@@ -80,7 +80,7 @@ export default class CircuitBreaker {
         try {
           await this.switchVendor(msg);
         } catch (err) {
-          this.checkCircuit();
+          this.updateCircuit();
           await this.channel.nack(msg);
         }
       }
@@ -88,7 +88,7 @@ export default class CircuitBreaker {
   }
 
   public async sendToQueue(email) {
-    this.updateCircuit();
+    this.checkCircuit();
     if (this.circuit === "OPEN") {
       throw new Error("Circuit open");
     } else {
@@ -126,9 +126,9 @@ export default class CircuitBreaker {
     }
   }
 
-  private updateCircuit() {
+  private checkCircuit() {
     if (this.badRequest > this.threshHold) {
-      if (Date.now() - this.failedTime > this.retry) {
+      if (Date.now() - this.failedTime > this.retryMSec) {
         this.circuit = "HALF-OPEN";
       } else {
         this.circuit = "OPEN";
@@ -138,7 +138,7 @@ export default class CircuitBreaker {
     }
   }
 
-  private checkCircuit() {
+  private updateCircuit() {
     this.badRequest += 1;
     this.failedTime = Date.now();
 
